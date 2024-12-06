@@ -3,7 +3,7 @@
     {
       "maintainer": "ZAID KHAN",
       "oem": "Xiaomi",
-      "device": "Xiaomi 11 Lite NE 5G / Mi 11 LE",
+      "device": "11 Lite NE 5G / Mi 11 LE",
       "filename": "EvolutionX-14.0-20241114-lisa-v9.6-Official.zip",
       "download": "https://sourceforge.net/projects/evolution-x/files/lisa/14/EvolutionX-14.0-20241114-lisa-v9.6-Official.zip/download",
       "timestamp": 1731605059,
@@ -24,4 +24,4 @@
       ]
     }
   ]
-}   
+}

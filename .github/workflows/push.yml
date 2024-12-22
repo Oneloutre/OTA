@@ -1,0 +1,43 @@
+name: Send message to proper discord channel when a PR is merged.
+
+on:
+  push:
+    branches:
+      - udc
+      - vic
+      - udc-vanilla
+      - vic-vanilla
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  process-json-files:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Get changed files in the builds folder
+        id: changed-files-specific
+        uses: tj-actions/changed-files@v45
+        with:
+          files: builds/*.json
+
+      - name: Process JSON files if files changed in builds folder.
+        if: steps.changed-files-specific.outputs.any_changed == 'true'
+        env:
+          VIC_WEBHOOK: ${{ secrets.VIC_WEBHOOK }}
+          UDC_WEBHOOK: ${{ secrets.UDC_WEBHOOK }}
+          VIC_VANILLA_WEBHOOK: ${{ secrets.VIC_VANILLA_WEBHOOK }}
+          UDC_VANILLA_WEBHOOK: ${{ secrets.UDC_VANILLA_WEBHOOK }}
+          ALL_CHANGED_FILES: ${{ steps.changed-files-specific.outputs.all_changed_files }}
+        run: |
+          echo "Processing the following JSON files:"
+          echo "$ALL_CHANGED_FILES"
+
+          for file in $ALL_CHANGED_FILES; do
+            echo "Processing file: $file"
+            python3 .github/push.py $file
+          done

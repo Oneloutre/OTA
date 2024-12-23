@@ -40,16 +40,16 @@ jobs:
           json_list=()
 
           for json in "$ALL_CHANGED_FILES" do;
-          if [[ "$json" == *.json ]]; then
-            for txt in "$ALL_CHANGED_FILES" do;
-            if [[ "$txt" == *.txt]]; then
-              if [[ "${json_file%.json}" == ${json_file%.txt}]]
-              then
-                json_list+=("$json")
-              fi
+            if [[ "$json" == *.json ]]; then
+              for txt in "$ALL_CHANGED_FILES" do;
+                if [[ "$txt" == *.txt]]; then
+                  if [[ "${json_file%.json}" == ${json_file%.txt}]]
+                    then
+                    json_list+=("$json")
+                  fi
+                fi
+              done
             fi
-            done
-          fi
           done
 
           for json in "$json_files"; do

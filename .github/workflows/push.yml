@@ -37,15 +37,22 @@ jobs:
           ALL_CHANGED_FILES: ${{ steps.changed-files-specific.outputs.all_changed_files }}
         run: |
           echo "Checking if JSON and TXT files are matching..."
+
           json_list=()
-          
+
           for json in $ALL_CHANGED_FILES; do
             if [[ "$json" == *.json ]]; then
-              txt_file="${json%.json}.txt"
-              if [[ " $ALL_CHANGED_FILES " == *" $txt_file "* ]]; then
-                echo "Found matching TXT file for $json"
-                json_list+=("$json")
-              fi
+              json_basename=$(basename "$json")
+              txt_file="${json_basename%.json}.txt"
+
+              for txt in $ALL_CHANGED_FILES; do
+                txt_basename=$(basename "$txt")
+                if [[ "$txt_basename" == "$txt_file" ]]; then
+                  echo "Found matching TXT file for $json_basename"
+                  json_list+=("$json")
+                  break
+                fi
+              done
             fi
           done
 

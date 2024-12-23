@@ -23,7 +23,9 @@ jobs:
         id: changed-files-specific
         uses: tj-actions/changed-files@v45
         with:
-          files: builds/*.json
+          files: |
+            builds/*.json
+            changelogs/*.json
 
       - name: Process JSON files if files changed in builds folder.
         if: steps.changed-files-specific.outputs.any_changed == 'true'
@@ -35,9 +37,23 @@ jobs:
           ALL_CHANGED_FILES: ${{ steps.changed-files-specific.outputs.all_changed_files }}
         run: |
           echo "Processing the following JSON files:"
-          echo "$ALL_CHANGED_FILES"
+          
+          files=$(echo $ALL_CHANGED_FILES | tr " " "\n")
+          missing_txt=()
 
-          for file in $ALL_CHANGED_FILES; do
-            echo "Processing file: $file"
-            python3 .github/push.py $file
+          for json_file in "${files[@]}"; do
+            if [[ "$json_file" == *.json ]]; then
+              txt_file="${json_file%.json}.txt"
+
+              if [[ ! " ${files[*]} " =~ ${txt_file} ]]; then
+                missing_txt+=("$json_file")
+              fi
+            fi
+          done
+      
+          echo "JSON files without a matching TXT:"
+          printf "%s\n" "${missing_txt[@]}"
+          for json in "${missing_txt[@]}"; do
+            echo "Processing file: $json"
+            python3 .github/push.py $json
           done

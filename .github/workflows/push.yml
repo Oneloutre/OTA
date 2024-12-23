@@ -36,23 +36,20 @@ jobs:
           UDC_VANILLA_WEBHOOK: ${{ secrets.UDC_VANILLA_WEBHOOK }}
           ALL_CHANGED_FILES: ${{ steps.changed-files-specific.outputs.all_changed_files }}
         run: |
-          echo "Checking json and txt are matching"
+          echo "Checking if JSON and TXT files are matching..."
           json_list=()
-
-          for json in "$ALL_CHANGED_FILES" do;
+          
+          for json in $ALL_CHANGED_FILES; do
             if [[ "$json" == *.json ]]; then
-              for txt in "$ALL_CHANGED_FILES" do;
-                if [[ "$txt" == *.txt]]; then
-                  if [[ "${json_file%.json}" == ${json_file%.txt}]]
-                    then
-                    json_list+=("$json")
-                  fi
-                fi
-              done
+              txt_file="${json%.json}.txt"
+              if [[ " $ALL_CHANGED_FILES " == *" $txt_file "* ]]; then
+                echo "Found matching TXT file for $json"
+                json_list+=("$json")
+              fi
             fi
           done
 
-          for json in "$json_files"; do
+          for json in "${json_list[@]}"; do
             echo "Processing file: $json"
-            python3 .github/push.py $json
+            python3 .github/push.py "$json"
           done

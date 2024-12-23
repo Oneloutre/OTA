@@ -14,3 +14,4 @@ CLEAN FLASH IS RECOMMENDED!!
 # Rom / Device
 
  * Initial A15 Release
+ye
